@@ -46,10 +46,11 @@ module.exports = {
   mode: 'development',
   entry: {
     main: './index.js',
+    card: './moduleCards.js'
   },
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, './english-for-kids/dist'),
   },
   devServer: {
     port: 8080,
@@ -65,7 +66,7 @@ module.exports = {
       to: path.resolve(__dirname, 'dist'),
     }, {
       from: path.resolve(__dirname, './english-for-kids/src/img'),
-      to: path.resolve(__dirname, 'dist/assets/img'),
+      to: path.resolve(__dirname, './english-for-kids/dist/assets/img'),
     }]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
@@ -86,7 +87,7 @@ module.exports = {
         loader: 'file-loader',
         options: {
           name: '[name].[ext]',
-          outputPath: 'assets/img',
+          outputPath: './english-for-kids/dist/assets/img',
         },
       }],
     },
@@ -96,7 +97,7 @@ module.exports = {
         loader: 'file-loader',
         options: {
           name: '[name].[ext]',
-          outputPath: 'assets/fonts',
+          outputPath: './english-for-kids/dist/assets/fonts',
         },
       }],
     },
