@@ -67,6 +67,10 @@ module.exports = {
     }, {
       from: path.resolve(__dirname, './english-for-kids/src/img'),
       to: path.resolve(__dirname, './english-for-kids/dist/assets/img'),
+    },
+    {
+      from: path.resolve(__dirname, './english-for-kids/src/audio'),
+      to: path.resolve(__dirname, './english-for-kids/dist/assets/audio'),
     }]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
