@@ -195,6 +195,23 @@ svg {
   text-decoration: underline;
 }
 
+.card_name {
+  font-size: 20px;
+}
+
+.card_word {
+  text-transform: capitalize;
+  font-size: 18px;
+}
+
+.card_word_hidden {
+  display: none;
+}
+
+.translate_word {
+  display: none;
+}
+
 .card {
   width: 300px;
   height: 300px;
@@ -214,18 +231,19 @@ svg {
           box-shadow: 0 5px 10px rgba(158, 163, 163, 0.5), -5px 5px 10px rgba(158, 163, 163, 0.5), 5px -5px 10px rgba(158, 163, 163, 0.5);
 }
 
-.card p {
-  margin-top: 0px;
-}
-
 .card img {
   cursor: pointer;
 }
 
 .card svg {
   cursor: pointer;
-  text-align: left;
   float: right;
+  margin-right: 10px;
+  fill: darkgrey;
+}
+
+.card svg:hover {
+  fill: #a1402f;
 }
 
 .correct {
