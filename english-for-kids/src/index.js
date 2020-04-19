@@ -34,7 +34,7 @@ function init() {
   }
 }
 
-function createCards(event) {
+function createCards() {
   const fragment = document.createDocumentFragment()
   let numberCards = 0
   const rotateImg = `<svg class="rotateSvg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="25" viewBox="0, 0, 400,400"><g id="svgg"><path id="path0" d="M149.333 106.849 C -33.313 127.384,-41.223 252.474,138.667 275.531 C 146.978 276.596,157.155 277.883,161.284 278.391 L 168.790 279.314 169.284 303.117 L 169.778 326.920 214.222 292.359 C 238.667 273.351,258.667 256.989,258.667 256.000 C 258.667 255.011,238.667 238.649,214.222 219.641 L 169.778 185.080 169.280 208.294 L 168.783 231.508 158.614 230.340 C 114.170 225.237,73.024 211.579,59.659 197.495 L 54.430 191.983 60.245 185.983 C 103.148 141.719,300.841 141.956,339.792 186.318 L 345.150 192.421 340.131 197.714 C 334.182 203.985,316.718 213.058,300.000 218.562 L 288.000 222.512 288.000 246.565 L 288.000 270.618 294.624 269.375 C 380.118 253.336,418.057 192.558,369.823 148.909 C 332.872 115.470,236.377 97.063,149.333 106.849 " stroke="none" fill-rule="evenodd"></path></g></svg>`
@@ -174,7 +174,7 @@ function game() {
         CONTAINER_CARDS.querySelectorAll('.play').forEach((item) => item.classList.remove('error'))
         document.querySelector('.stars').innerHTML = starWin + document.querySelector('.stars').innerHTML
         audioArrSort = audioArrSort.slice(0, audioArrSort.length - 1)
-        const audioSrcCorrect = new Audio('./assets/audio/correct.mp3')
+        const audioSrcCorrect = new Audio('audio/correct.mp3')
         audioSrcCorrect.play()
         if (audioArrSort.length === 0) {
           setTimeout(gameEnd, 500)
@@ -186,7 +186,7 @@ function game() {
     }
     if (numberCorrect === imageArr.length - 1 && audioArrSort.length !== 0) {
       document.querySelector('.stars').innerHTML = starLose + document.querySelector('.stars').innerHTML
-      const audioSrcError = new Audio('./assets/audio/error.mp3')
+      const audioSrcError = new Audio('audio/error.mp3')
       errorAnswer++
       CONTAINER_CARDS.querySelectorAll('.play')[numberError].classList.add('error')
       audioSrcError.play()
@@ -369,20 +369,20 @@ sodipodi:docname="Empty Star.svg">
 </svg>`
 
 function gameEnd() {
-  const audioSrcFailure = new Audio('./assets/audio/failure.mp3')
-  const audioSrcSuccess = new Audio('./assets/audio/success.mp3')
+  const audioSrcFailure = new Audio('audio/failure.mp3')
+  const audioSrcSuccess = new Audio('audio/success.mp3')
   document.querySelector('.switcher_container').classList.add('card_word_hidden')
   document.querySelector('.stars').innerHTML = ''
   document.querySelector('.container_cards').classList.add('card_word_hidden')
   document.querySelector('.btn_game').classList.add('card_word_hidden')
   if (errorAnswer === 1) {
-    document.querySelector('.container').innerHTML += `<div class="end_game"><span>${errorAnswer} error</span><br><img src="english-for-kids/src/img/failure.jpg" alt="failure"></div>`
+    document.querySelector('.container').innerHTML += `<div class="end_game"><span>${errorAnswer} error</span><br><img src="img/failure.jpg" alt="failure"></div>`
     audioSrcFailure.play()
   } else if (errorAnswer > 1) {
-    document.querySelector('.container').innerHTML += `<div class="end_game"><span>${errorAnswer} errors</span><br><img src="english-for-kids/src/img/failure.jpg" alt="failure"></div>`
+    document.querySelector('.container').innerHTML += `<div class="end_game"><span>${errorAnswer} errors</span><br><img src="img/failure.jpg" alt="failure"></div>`
     audioSrcFailure.play()
   } else if (errorAnswer === 0) {
-    document.querySelector('.container').innerHTML += `<div class="end_game"><span>Win!</span><br><img src="english-for-kids/src/img/success.jpg" alt="success"></div>`
+    document.querySelector('.container').innerHTML += `<div class="end_game"><span>Win!</span><br><img src="img/success.jpg" alt="success"></div>`
     audioSrcSuccess.play()
   }
   setTimeout(open, 4000)
