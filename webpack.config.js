@@ -50,7 +50,7 @@ module.exports = {
   },
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, './english-for-kids/dist'),
+    path: path.resolve(__dirname, './dist'),
   },
   devServer: {
     port: 8080,
@@ -66,11 +66,11 @@ module.exports = {
       to: path.resolve(__dirname, 'dist'),
     }, {
       from: path.resolve(__dirname, './english-for-kids/src/img'),
-      to: path.resolve(__dirname, './english-for-kids/dist/assets/img'),
+      to: path.resolve(__dirname, 'dist/img'),
     },
     {
       from: path.resolve(__dirname, './english-for-kids/src/audio'),
-      to: path.resolve(__dirname, './english-for-kids/dist/assets/audio'),
+      to: path.resolve(__dirname, 'dist/audio'),
     }]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
@@ -91,7 +91,7 @@ module.exports = {
         loader: 'file-loader',
         options: {
           name: '[name].[ext]',
-          outputPath: './english-for-kids/dist/assets/img',
+          outputPath: 'dist/img',
         },
       }],
     },
@@ -101,7 +101,7 @@ module.exports = {
         loader: 'file-loader',
         options: {
           name: '[name].[ext]',
-          outputPath: './english-for-kids/dist/assets/fonts',
+          outputPath: './dist/assets/fonts',
         },
       }],
     },
