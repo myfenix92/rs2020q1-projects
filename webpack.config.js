@@ -46,7 +46,8 @@ module.exports = {
   mode: 'development',
   entry: {
     main: './index.js',
-    card: './moduleCards.js'
+    card: './moduleCards.js',
+    const: './moduleConst.js',
   },
   output: {
     filename: '[name].bundle.js',
