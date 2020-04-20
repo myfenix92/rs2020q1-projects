@@ -17,6 +17,7 @@
     "max-len": "off",
     "no-plusplus": "off",
     "no-use-before-define": "off",
-    "no-useless-escape": "off"
+    "no-useless-escape": "off",
+    "no-restricted-globals": "off"
   }
 }
