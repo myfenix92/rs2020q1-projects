@@ -340,7 +340,7 @@
       word: 'sandwich',
       translation: 'сэндвич',
       image: 'img/sandwich.jpg',
-      audioSrc: '/assets/audio/sandwich.mp3',
+      audioSrc: 'audio/sandwich.mp3',
     },
     {
       word: 'soup',
