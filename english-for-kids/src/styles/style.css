@@ -6,7 +6,7 @@ html {
 
 .wrapper {
   margin: 0 auto;
-  max-width: 80vw;
+  width: 80vw;
   padding: 50px 20px 0 20px;
 }
 
@@ -90,7 +90,7 @@ svg {
 .container_cards {
   display: -ms-grid;
   display: grid;
-  grid-gap: 45px;
+  grid-gap: 25px;
   -ms-grid-columns: (1fr)[4];
       grid-template-columns: repeat(4, 1fr);
   justify-items: center;
