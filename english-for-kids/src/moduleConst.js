@@ -7,8 +7,7 @@ viewBox="0 0 341.333 341.333" style="enable-background:new 0 0 341.333 341.333;"
    c-70.72,0-128-57.28-128-128s57.28-128,128-128c35.307,0,66.987,14.72,90.133,37.867l-68.8,68.8H341.227z"/>
 </g>
 </g>
-</svg>`
-
+</svg>`;
 const starWin = `<svg class="star_win"
 xmlns:dc="http://purl.org/dc/elements/1.1/"
 xmlns:cc="http://web.resource.org/cc/"
@@ -84,8 +83,7 @@ sodipodi:docname="Empty Star.svg">
     d="M 46.296296,51.906272 L 31.916351,42.474649 L 17.502712,51.8547 L 22.029072,35.264028 L 8.654054,24.454438 L 25.831443,23.632463 L 31.978866,7.5717174 L 38.068716,23.65438 L 55.243051,24.537884 L 41.829396,35.299492 L 46.296296,51.906272 z "
     transform="matrix(0.986858,0,0,1.03704,0.471316,1.159472)" />
 </g>
-</svg>`
-
+</svg>`;
 const starLose = `<svg class="star_lose"
 xmlns:dc="http://purl.org/dc/elements/1.1/"
 xmlns:cc="http://web.resource.org/cc/"
@@ -161,6 +159,37 @@ sodipodi:docname="Empty Star.svg">
     d="M 46.296296,51.906272 L 31.916351,42.474649 L 17.502712,51.8547 L 22.029072,35.264028 L 8.654054,24.454438 L 25.831443,23.632463 L 31.978866,7.5717174 L 38.068716,23.65438 L 55.243051,24.537884 L 41.829396,35.299492 L 46.296296,51.906272 z "
     transform="matrix(0.986858,0,0,1.03704,0.471316,1.159472)" />
 </g>
-</svg>`
+</svg>`;
+const rotateImg = `<svg class="rotateSvg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="25" viewBox="0, 0, 400,400"><g id="svgg">
+  <path id="path0" d="M149.333 106.849 C -33.313 127.384,-41.223 252.474,138.667 275.531 C 146.978 276.596,157.155 277.883,161.284 278.391 
+  L 168.790 279.314 169.284 303.117 L 169.778 326.920 
+  214.222 292.359 C 238.667 273.351,258.667 256.989,258.667 256.000 
+  C 258.667 255.011,238.667 238.649,214.222 219.641 L 169.778 185.080 169.280 208.294 
+  L 168.783 231.508 158.614 230.340 C 114.170 225.237,73.024 211.579,59.659 197.495 
+  L 54.430 191.983 60.245 185.983 C 103.148 141.719,300.841 141.956,339.792 186.318 
+  L 345.150 192.421 340.131 197.714 C 334.182 203.985,316.718 213.058,300.000 218.562 
+  L 288.000 222.512 288.000 246.565 L 288.000 270.618 294.624 269.375 C 380.118 253.336,418.057 
+  192.558,369.823 148.909 C 332.872 115.470,236.377 97.063,149.333 106.849 " stroke="none" fill-rule="evenodd"></path></g></svg>`;
 
-export { rotate, starWin, starLose }
+const audioSrcFailure = new Audio('audio/failure.mp3');
+const audioSrcError = new Audio('audio/error.mp3');
+const audioSrcSuccess = new Audio('audio/success.mp3');
+const audioSrcCorrect = new Audio('audio/correct.mp3');
+
+const fihishGameTime = 4000;
+const endGame = 500;
+const playNextAudioTime = 700;
+
+export {
+  rotate,
+  starWin,
+  starLose,
+  rotateImg,
+  audioSrcFailure,
+  audioSrcSuccess,
+  fihishGameTime,
+  playNextAudioTime,
+  endGame,
+  audioSrcError,
+  audioSrcCorrect,
+}
