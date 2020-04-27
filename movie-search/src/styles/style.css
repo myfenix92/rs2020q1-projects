@@ -1,0 +1,32 @@
+form {
+  position: relative;
+}
+
+input {
+  background-image: url("../img/search_icon.svg");
+  background-repeat: no-repeat;
+  padding-left: 20px;
+}
+
+.clear {
+  background-image: url("../img/clear_icon.svg");
+  background-repeat: no-repeat;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 2px;
+  left: 120px;
+  cursor: pointer;
+}
+
+.keyboard {
+  background-image: url("../img/keyboard_icon.svg");
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 2px;
+  width: 30px;
+  height: 30px;
+  left: 160px;
+  cursor: pointer;
+}
+/*# sourceMappingURL=style.css.map */

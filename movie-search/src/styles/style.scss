@@ -1,0 +1,7 @@
+﻿input {
+  background-image: url('./img/search_icon.svg');   
+  background-repeat: no-repeat;
+  ::after {
+    content: url('../img/keyboard_icon.svg');
+  }
+}
