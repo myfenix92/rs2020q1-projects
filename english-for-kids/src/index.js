@@ -245,7 +245,7 @@ function game() {
 // game start
 
 document.querySelectorAll('.container_card').forEach((itemCardGame) => itemCardGame.addEventListener('click', (event) => {
-  if (BUTTON.innerHTML !== 'Start Game') {
+  if (BUTTON.textContent !== 'Start Game') {
     currentTarget = event.target.src;
     game();
   }
