@@ -7,9 +7,9 @@ import {
   rotateImg,
   audioSrcFailure,
   audioSrcSuccess,
-  fihishGameTime,
+  finishGameDelay,
   playNextAudioTime,
-  endGame,
+  endGameDelay,
   audioSrcError,
   audioSrcCorrect,
 } from './moduleConst';
@@ -25,7 +25,7 @@ let audioArr = [];
 let audioArrSort = [];
 let currentTarget;
 
-let errorAnswer = 0
+let errorAnswer = 0;
 const nameCards = ['Action (set A)', 'Action (set B)', 'Animals (set A)', 'Animals (set B)',
   'Clothes', 'Emotions', 'Food', 'Weather'];
 
@@ -58,8 +58,10 @@ function createCards() {
     }
   }
   const createCard = CONTAINER_CARDS.querySelectorAll('div').forEach((e) => {
-    e.innerHTML = `<img class="img_font" src="${cards[numberCards][numberAddCard].image}"><img class="back_img" src="${cards[numberCards][numberAddCard].image}">
-    <br><span class="font">${cards[numberCards][numberAddCard].word}</span><span class="translate_word">${cards[numberCards][numberAddCard].translation}</span>
+    e.innerHTML = `<img class="img_font" src="${cards[numberCards][numberAddCard].image}">
+    <img class="back_img" src="${cards[numberCards][numberAddCard].image}">
+    <br><span class="font">${cards[numberCards][numberAddCard].word}</span>
+    <span class="translate_word">${cards[numberCards][numberAddCard].translation}</span>
     ${rotateImg}<audio src="${cards[numberCards][numberAddCard].audioSrc}"></audio>`
     numberAddCard++;
   });
@@ -223,7 +225,7 @@ function game() {
         audioArrSort = audioArrSort.slice(0, audioArrSort.length - 1);
         audioSrcCorrect.play();
         if (audioArrSort.length === 0) {
-          setTimeout(finishGame, endGame);
+          setTimeout(finishGame, endGameDelay);
         } else {
           setTimeout(playNextAudio, playNextAudioTime);
           numberCorrect = imageArr.length;
@@ -279,7 +281,7 @@ function finishGame() {
     <br><img src="img/success.jpg" alt="success"></div>`;
     audioSrcSuccess.play();
   }
-  setTimeout(open, fihishGameTime);
+  setTimeout(open, finishGameDelay);
 }
 
 document.addEventListener('click', (event) => {
