@@ -176,8 +176,8 @@ const audioSrcError = new Audio('audio/error.mp3');
 const audioSrcSuccess = new Audio('audio/success.mp3');
 const audioSrcCorrect = new Audio('audio/correct.mp3');
 
-const fihishGameTime = 4000;
-const endGame = 500;
+const finishGameDelay = 4000;
+const endGameDelay = 500;
 const playNextAudioTime = 700;
 
 export {
@@ -187,9 +187,9 @@ export {
   rotateImg,
   audioSrcFailure,
   audioSrcSuccess,
-  fihishGameTime,
+  finishGameDelay,
   playNextAudioTime,
-  endGame,
+  endGameDelay,
   audioSrcError,
   audioSrcCorrect,
 }
