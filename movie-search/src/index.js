@@ -8,6 +8,11 @@ let raitingArray = [];
 let raitData = [];
 let page = 1;
 let inputValue;
+let isTrue
+
+const isCyrillic = function (text) {
+  return /[а-я]/i.test(text);
+}
 
 function clearInput() {
   document.getElementById('search_input').value = '';
@@ -19,19 +24,41 @@ document.querySelector('.clear').addEventListener('click', clearInput);
 document.getElementById('btn').addEventListener('click', initSearch);
 
 function initSearch() {
-  document.querySelector('.swiper-wrapper').innerHTML = '';
-  inputValue = document.getElementById('search_input').value;
+  isTrue = true
+  if (document.getElementById('search_input').value !== '') {
+    inputValue = document.getElementById('search_input').value;
+    if (isCyrillic(inputValue)) {
+      valueTranslate()
+    } else {
+      clearArray()
+      getMovie();
+    }
+  } else {
+    document.querySelector('.result_field').classList.remove('hidden_result');
+    document.querySelector('.result_field').textContent = `Something wrong... Enter movie title`;
+  }
+}
+
+function clearArray() {
   titleArray = [];
   posterArray = [];
   yearArray = [];
   raitingArray = [];
   raitData = [];
+}
+
+async function valueTranslate() {
+  const url = `https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20200502T220917Z.cd9bb434abbf37f3.c07bdee9e96c935d70f599242ba2dd8c64fd0f9b&text=${inputValue}&lang=ru-en`;
+  const res = await fetch(url);
+  const data = await res.json();
+  inputValue = data.text[0];
+  clearArray()
   getMovie();
-  // addResult()
 }
 
 async function getMovie() {
   const url = `https://www.omdbapi.com/?s=${inputValue}&page=${page}&apikey=24f0fb79`;
+  document.querySelector('.result_field').classList.add('hidden_result');
   document.querySelector('.dots').style.visibility = 'visible';
   const res = await fetch(url);
   const data = await res.json();
@@ -48,31 +75,32 @@ async function getMovie() {
       const dataRait = await resRait.json();
       raitData.push(dataRait.imdbRating);
     }
-  } finally {
-    document.querySelector('.dots').style.visibility = 'hidden';
+
+    if (document.getElementById('search_input').value !== '') {
+      document.querySelector('.result_field').classList.remove('hidden_result')
+      document.querySelector('.result_field').textContent = `Showing results for ${inputValue}`;
+    }
+  } catch {
+    console.log('error')
+    document.querySelector('.result_field').classList.remove('hidden_result')
+    document.querySelector('.result_field').textContent = `No results for ${inputValue}`;
   }
+
+  document.querySelector('.dots').style.visibility = 'hidden';
+
   page += 1;
+  console.log(posterArray.length)
+  if (posterArray.length !== 0 && isTrue) {
+  document.querySelector('.swiper-wrapper').innerHTML = ''}
+  isTrue = false
+  if (titleArray.length !== 0) {
   createSlide();
   addTitle();
   addPoster();
   addYear();
   addRaiting();
-  console.log(titleArray)
+  }
 }
-
-// function addResult() {
-//   document.getElementById('loader').append(document.createElement('p'));
-//   document.getElementById('loader').querySelector('p').classList.add('result_field')
-//   if (inputValue === '') {
-//     document.getElementById('loader').querySelector('p').textContent = `Enter movie title`;
-//   }
-//   if (inputValue !== '' && titleArray.length === 0) {
-//     document.getElementById('loader').querySelector('p').textContent = `No results for ${inputValue}`;
-//   // }
-//   if (document.querySelector('.swiper-slide').innerText !== '') {
-//     document.getElementById('loader').querySelector('p').textContent = `Showing results for ${inputValue}`;
-//   }
-// }
 
 function addTitle() {
   document.querySelectorAll('.swiper-slide').forEach((e) => {
@@ -84,6 +112,7 @@ function addTitle() {
     e.textContent = titleArray[i];
     e.classList.add('name_movie');
     e.setAttribute('href', `https://www.imdb.com/title/${raitingArray[i]}/videogallery/`);
+    e.target = '_blank'
     i += 1;
   })
 }
@@ -112,7 +141,7 @@ function addYear() {
   })
 }
 
-async function addRaiting() {
+function addRaiting() {
   document.querySelectorAll('.swiper-slide').forEach((e) => e.append(document.createElement('span')));
   let i = 0;
   document.getElementById('slider_container').querySelectorAll('span').forEach((e) => {
@@ -133,15 +162,6 @@ function addNewSlide() {
   if (addSlide[addSlide.length - 4].classList[1] === 'swiper-slide-next') {
     getMovie();
   }
-  // let i = 0;
-  // addSlide.forEach((e) => {
-  //   if (e.classList[1] === 'swiper-slide-next') {
-  //     if (addSlide.length - i < 5) {
-  //       getMovie();
-  //     }
-  //   }
-  //   i += 1;
-  // })
 }
 
 document.querySelector('.swiper-button-next').addEventListener('click', addNewSlide);
