@@ -1,14 +1,18 @@
 ﻿import './styles/style.css';
 import createSlide from './swiper';
+import initKeyboard from './moduleKeyboard'
 
 let titleArray = [];
 let posterArray = [];
 let yearArray = [];
 let raitingArray = [];
 let raitData = [];
-let page = 1;
+export let page = 1;
 let inputValue;
 let isTrue
+
+export const KEYBOARD_CONTAINER = document.getElementById('keyboard_container_movie')
+export let input = document.getElementById('search_input')
 
 const isCyrillic = function (text) {
   return /[а-я]/i.test(text);
@@ -17,13 +21,24 @@ const isCyrillic = function (text) {
 function clearInput() {
   document.getElementById('search_input').value = '';
   document.getElementById('loader').querySelector('p').textContent = '';
+  document.getElementById('search_input').focus()
 }
 
+function addKeyboard() {
+  if (KEYBOARD_CONTAINER.className !== 'keyboard_container_visible') {
+    KEYBOARD_CONTAINER.classList.add('keyboard_container_visible')
+  }
+  else {
+    KEYBOARD_CONTAINER.classList.remove('keyboard_container_visible')
+  }
+ }
+
 document.querySelector('.clear').addEventListener('click', clearInput);
+document.querySelector('.keyboard_icon').addEventListener('click', addKeyboard);
 
 document.getElementById('btn').addEventListener('click', initSearch);
 
-function initSearch() {
+export default function initSearch() {
   isTrue = true
   if (document.getElementById('search_input').value !== '') {
     inputValue = document.getElementById('search_input').value;
@@ -62,6 +77,7 @@ async function getMovie() {
   document.querySelector('.dots').style.visibility = 'visible';
   const res = await fetch(url);
   const data = await res.json();
+
   try {
     for (let i = 0; i < 10; i += 1) {
       titleArray.push(data.Search[i].Title);
@@ -69,6 +85,7 @@ async function getMovie() {
       yearArray.push(data.Search[i].Year);
       raitingArray.push(data.Search[i].imdbID);
     }
+   
     for (let i = raitingArray.length - 10; i < raitingArray.length; i += 1) {
       const urlRait = `https://www.omdbapi.com/?i=${raitingArray[i]}&apikey=24f0fb79`;
       const resRait = await fetch(urlRait);
@@ -89,7 +106,8 @@ async function getMovie() {
   document.querySelector('.dots').style.visibility = 'hidden';
 
   page += 1;
-  console.log(posterArray.length)
+  console.log(titleArray.length)
+  
   if (posterArray.length !== 0 && isTrue) {
   document.querySelector('.swiper-wrapper').innerHTML = ''}
   isTrue = false
@@ -152,7 +170,7 @@ function addRaiting() {
 }
 
 function init() {
-  inputValue = 'cat';
+  inputValue = 'batman';
   getMovie();
 }
 
@@ -176,4 +194,6 @@ document.getElementById('search_input').addEventListener('keyup', (event) => {
 
 window.addEventListener('DOMContentLoaded', () => {
   init();
+  document.getElementById('search_input').focus();
+  initKeyboard();
 })
