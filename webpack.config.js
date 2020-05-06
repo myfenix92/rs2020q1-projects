@@ -44,8 +44,9 @@ module.exports = {
   context: path.resolve(__dirname, './movie-search/src'),
   mode: 'development',
   entry: {
-    main: './index.js',
-    const: './moduleConst.js',
+    main: ['@babel/polyfill', './index.js'],
+   const: './moduleConst.js',
+   keyboard: './moduleKeyboard.js'
   },
   output: {
     filename: '[name].bundle.js',
