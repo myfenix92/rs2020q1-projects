@@ -1,56 +1,95 @@
 ﻿import './styles/style.css';
-import createSlide from './swiper';
-import initKeyboard from './moduleKeyboard'
+import initKeyboard from './moduleKeyboard';
+import {
+  KEYBOARD_CONTAINER, INPUT, LOADER_CONTAINER, SEARCH_BTN, CLEAR_BTN,
+  KEYBOARD_BTN, RESULT_CONTAINER, DOTS_CONTAINER, VOICE_BTN, isCyrillic,
+} from './moduleConst'
 
 let titleArray = [];
 let posterArray = [];
 let yearArray = [];
 let raitingArray = [];
 let raitData = [];
-export let page = 1;
-let inputValue;
-let isTrue
+let typeArray = [];
+let page = 1;
+let tempInput;
+let tempPage;
+let inputCurrentValue;
+let isTrue;
+let resultCount;
+let itemSlide;
 
-export const KEYBOARD_CONTAINER = document.getElementById('keyboard_container_movie')
-export let input = document.getElementById('search_input')
+window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
 
-const isCyrillic = function (text) {
-  return /[а-я]/i.test(text);
-}
-
-function clearInput() {
-  document.getElementById('search_input').value = '';
-  document.getElementById('loader').querySelector('p').textContent = '';
-  document.getElementById('search_input').focus()
-}
-
-function addKeyboard() {
-  if (KEYBOARD_CONTAINER.className !== 'keyboard_container_visible') {
-    KEYBOARD_CONTAINER.classList.add('keyboard_container_visible')
+CLEAR_BTN.addEventListener('click', clearInput);
+KEYBOARD_BTN.addEventListener('click', addKeyboard);
+SEARCH_BTN.addEventListener('click', initSearch);
+VOICE_BTN.addEventListener('click', speakMovie);
+document.querySelector('.swiper-button-next').addEventListener('click', addNewSlide);
+INPUT.addEventListener('keyup', (event) => {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+    initSearch();
   }
-  else {
-    KEYBOARD_CONTAINER.classList.remove('keyboard_container_visible')
-  }
- }
+});
 
-document.querySelector('.clear').addEventListener('click', clearInput);
-document.querySelector('.keyboard_icon').addEventListener('click', addKeyboard);
-
-document.getElementById('btn').addEventListener('click', initSearch);
+async function valueTranslate() {
+  const url = `https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20200502T220917Z.cd9bb434abbf37f3.c07bdee9e96c935d70f599242ba2dd8c64fd0f9b&text=${inputCurrentValue}&lang=ru-en`;
+  const res = await fetch(url);
+  const data = await res.json();
+  inputCurrentValue = data.text[0].replace(/^The /gi, '');
+  getMovie();
+}
 
 export default function initSearch() {
-  isTrue = true
-  if (document.getElementById('search_input').value !== '') {
-    inputValue = document.getElementById('search_input').value;
-    if (isCyrillic(inputValue)) {
-      valueTranslate()
+  tempPage = page;
+  page = 1;
+  tempInput = inputCurrentValue;
+  isTrue = true;
+  INPUT.placeholder = 'Search Movie';
+  KEYBOARD_CONTAINER.classList.add('keyboard_container_visible');
+  if (INPUT.value !== '') {
+    inputCurrentValue = INPUT.value;
+    if (isCyrillic(inputCurrentValue)) {
+      valueTranslate();
     } else {
-      clearArray()
       getMovie();
     }
   } else {
-    document.querySelector('.result_field').classList.remove('hidden_result');
-    document.querySelector('.result_field').textContent = `Something wrong... Enter movie title`;
+    RESULT_CONTAINER.classList.remove('hidden_result');
+    RESULT_CONTAINER.textContent = `Something wrong... Enter movie title`;
+  }
+}
+
+function speakMovie() {
+  recognition.start();
+  INPUT.placeholder = 'Speak';
+  recognition.addEventListener('end', initSearch);
+}
+
+recognition.interimResults = true;
+
+recognition.addEventListener('result', (e) => {
+  const transcript = Array.from(e.results)
+    .map((result) => result[0])
+    .map((result) => result.transcript)
+    .join('');
+  INPUT.value = transcript;
+});
+
+function clearInput() {
+  INPUT.value = '';
+  LOADER_CONTAINER.querySelector('p').textContent = '';
+  INPUT.focus();
+}
+
+function addKeyboard() {
+  INPUT.focus();
+  if (KEYBOARD_CONTAINER.className !== 'keyboard_container_visible') {
+    KEYBOARD_CONTAINER.classList.add('keyboard_container_visible');
+  } else {
+    KEYBOARD_CONTAINER.classList.remove('keyboard_container_visible');
   }
 }
 
@@ -60,140 +99,175 @@ function clearArray() {
   yearArray = [];
   raitingArray = [];
   raitData = [];
-}
-
-async function valueTranslate() {
-  const url = `https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20200502T220917Z.cd9bb434abbf37f3.c07bdee9e96c935d70f599242ba2dd8c64fd0f9b&text=${inputValue}&lang=ru-en`;
-  const res = await fetch(url);
-  const data = await res.json();
-  inputValue = data.text[0];
-  clearArray()
-  getMovie();
+  typeArray = [];
 }
 
 async function getMovie() {
-  const url = `https://www.omdbapi.com/?s=${inputValue}&page=${page}&apikey=24f0fb79`;
-  document.querySelector('.result_field').classList.add('hidden_result');
-  document.querySelector('.dots').style.visibility = 'visible';
+  const url = `https://www.omdbapi.com/?s=${inputCurrentValue}&page=${page}&apikey=24f0fb79`;
+  RESULT_CONTAINER.classList.add('hidden_result');
+  DOTS_CONTAINER.style.visibility = 'visible';
   const res = await fetch(url);
   const data = await res.json();
+  itemSlide = 0;
+  resultCount = data.totalResults;
+  if (data.Response === 'True' && isTrue) {
+    clearArray();
+  }
+  if (resultCount - ((page - 1) * 10) >= 10) {
+    itemSlide = 10;
+  } else {
+    itemSlide = resultCount - ((page - 1) * 10);
+  }
 
   try {
-    for (let i = 0; i < 10; i += 1) {
+    for (let i = 0; i < itemSlide; i += 1) {
       titleArray.push(data.Search[i].Title);
       posterArray.push(data.Search[i].Poster);
       yearArray.push(data.Search[i].Year);
       raitingArray.push(data.Search[i].imdbID);
+      typeArray.push(data.Search[i].Type);
     }
-   
-    for (let i = raitingArray.length - 10; i < raitingArray.length; i += 1) {
-      const urlRait = `https://www.omdbapi.com/?i=${raitingArray[i]}&apikey=24f0fb79`;
+    for (let itemRait = raitingArray.length - itemSlide;
+      itemRait < raitingArray.length; itemRait += 1) {
+      const urlRait = `https://www.omdbapi.com/?i=${raitingArray[itemRait]}&apikey=24f0fb79`;
       const resRait = await fetch(urlRait);
       const dataRait = await resRait.json();
       raitData.push(dataRait.imdbRating);
     }
 
-    if (document.getElementById('search_input').value !== '') {
-      document.querySelector('.result_field').classList.remove('hidden_result')
-      document.querySelector('.result_field').textContent = `Showing results for ${inputValue}`;
+    if (INPUT.value !== '' && data.Response === 'True') {
+      RESULT_CONTAINER.classList.remove('hidden_result');
+      RESULT_CONTAINER.textContent = `Showing results for "${inputCurrentValue}". Find ${resultCount} results.`;
+    } else if (INPUT.value !== '' && data.Response === 'False') {
+      throw Error(data.Error);
     }
-  } catch {
-    console.log('error')
-    document.querySelector('.result_field').classList.remove('hidden_result')
-    document.querySelector('.result_field').textContent = `No results for ${inputValue}`;
+  } catch (error) {
+    RESULT_CONTAINER.classList.remove('hidden_result');
+    RESULT_CONTAINER.textContent = `${data.Error} No results for "${inputCurrentValue}"`
   }
 
-  document.querySelector('.dots').style.visibility = 'hidden';
+  DOTS_CONTAINER.style.visibility = 'hidden';
 
-  page += 1;
-  console.log(titleArray.length)
-  
-  if (posterArray.length !== 0 && isTrue) {
-  document.querySelector('.swiper-wrapper').innerHTML = ''}
-  isTrue = false
-  if (titleArray.length !== 0) {
-  createSlide();
-  addTitle();
-  addPoster();
-  addYear();
-  addRaiting();
+  if (data.Response === 'True') {
+    page += 1;
+  } else {
+    page = tempPage;
+    inputCurrentValue = tempInput;
+  }
+  if (data.Response === 'True' && isTrue) {
+    document.querySelector('.swiper-wrapper').innerHTML = '';
+  }
+  isTrue = false;
+  if (data.Response === 'True') {
+    createSlide();
+    addTitle();
+    addPoster();
+    addYear();
+    addRaiting();
+  }
+}
+
+const mySwiper = new Swiper('.swiper-container', {
+  direction: 'horizontal',
+  loop: false,
+  slidesPerView: 4,
+  spaceBetween: 20,
+  grabCursor: true,
+  simulateTouch: true,
+  breakpoints: {
+    320: {
+      slidesPerView: 1,
+    },
+    768: {
+      slidesPerView: 2,
+      spaceBetween: 10,
+    },
+    1023: {
+      slidesPerView: 3,
+      spaceBetween: 15,
+    },
+    1440: {
+      slidesPerView: 4,
+      spaceBetween: 20,
+    },
+  },
+
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+});
+
+function addNewSlide() {
+  if (titleArray.length - mySwiper.realIndex < 5) {
+    getMovie();
+  }
+}
+
+mySwiper.on('slideChange', addNewSlide);
+
+function createSlide() {
+  for (let numberSlide = 0; numberSlide < itemSlide; numberSlide += 1) {
+    mySwiper.appendSlide('<div class="swiper-slide"></div>');
   }
 }
 
 function addTitle() {
-  document.querySelectorAll('.swiper-slide').forEach((e) => {
-    e.innerHTML = '';
+  document.querySelectorAll('.swiper-slide').forEach((slideItem) => {
+    slideItem.innerHTML = '';
   });
   document.querySelectorAll('.swiper-slide').forEach((e) => e.append(document.createElement('a')));
-  let i = 0
-  document.getElementById('slider_container').querySelectorAll('a').forEach((e) => {
-    e.textContent = titleArray[i];
-    e.classList.add('name_movie');
-    e.setAttribute('href', `https://www.imdb.com/title/${raitingArray[i]}/videogallery/`);
-    e.target = '_blank'
-    i += 1;
+  let numberTitle = 0;
+  document.getElementById('slider_container').querySelectorAll('a').forEach((titleItem) => {
+    titleItem.textContent = `${titleArray[numberTitle]} (${typeArray[numberTitle]})`;
+    titleItem.classList.add('name_movie');
+    titleItem.setAttribute('href', `https://www.imdb.com/title/${raitingArray[numberTitle]}/videogallery/`);
+    titleItem.target = '_blank';
+    numberTitle += 1;
   })
 }
 
 function addPoster() {
   document.querySelectorAll('.swiper-slide').forEach((e) => e.append(document.createElement('img')));
-  let i = 0;
-  document.getElementById('slider_container').querySelectorAll('img').forEach((e) => {
-    if (posterArray[i] === 'N/A') {
-      e.src = './img/poster_movie.jpg';
+  let numberPoster = 0;
+  document.getElementById('slider_container').querySelectorAll('img').forEach((posterImg) => {
+    if (posterArray[numberPoster] === 'N/A') {
+      posterImg.src = './img/poster_movie.jpg';
     } else {
-      e.src = posterArray[i];
+      posterImg.src = posterArray[numberPoster];
     }
-    e.classList.add('poster_movie');
-    i += 1;
+    posterImg.classList.add('poster_movie');
+    numberPoster += 1;
   })
 }
 
 function addYear() {
   document.querySelectorAll('.swiper-slide').forEach((e) => e.append(document.createElement('p')));
-  let i = 0;
-  document.getElementById('slider_container').querySelectorAll('p').forEach((e) => {
-    e.textContent = yearArray[i];
-    e.classList.add('year_movie');
-    i += 1;
+  let numberYear = 0;
+  document.getElementById('slider_container').querySelectorAll('p').forEach((yearItem) => {
+    yearItem.textContent = yearArray[numberYear];
+    yearItem.classList.add('year_movie');
+    numberYear += 1;
   })
 }
 
 function addRaiting() {
   document.querySelectorAll('.swiper-slide').forEach((e) => e.append(document.createElement('span')));
-  let i = 0;
-  document.getElementById('slider_container').querySelectorAll('span').forEach((e) => {
-    e.textContent = raitData[i];
-    e.classList.add('raiting_movie');
-    i += 1;
+  let numberRait = 0;
+  document.getElementById('slider_container').querySelectorAll('span').forEach((raitItem) => {
+    raitItem.textContent = raitData[numberRait];
+    raitItem.classList.add('raiting_movie');
+    numberRait += 1;
   })
 }
 
 function init() {
-  inputValue = 'batman';
+  inputCurrentValue = 'batman';
   getMovie();
 }
 
-
-function addNewSlide() {
-  const addSlide = [...document.querySelector('.swiper-wrapper').querySelectorAll('.swiper-slide')];
-  if (addSlide[addSlide.length - 4].classList[1] === 'swiper-slide-next') {
-    getMovie();
-  }
-}
-
-document.querySelector('.swiper-button-next').addEventListener('click', addNewSlide);
-// document.querySelector('.swiper-wrapper').addEventListener('mousedown', addNewSlide);
-
-document.getElementById('search_input').addEventListener('keyup', (event) => {
-  event.preventDefault();
-  if (event.keyCode === 13) {
-    initSearch();
-  }
-});
-
 window.addEventListener('DOMContentLoaded', () => {
   init();
-  document.getElementById('search_input').focus();
+  INPUT.focus();
   initKeyboard();
 })
