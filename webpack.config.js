@@ -5,9 +5,10 @@ const {
 } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const isDev = process.env.NODE_ENV === 'development'
-console.log('DEV', isDev)
+// console.log('DEV', isDev)
 
 const cssLoaders = (extra) => {
   const loaders = [{
@@ -45,8 +46,8 @@ module.exports = {
   mode: 'development',
   entry: {
     main: ['@babel/polyfill', './index.js'],
-   const: './moduleConst.js',
-   keyboard: './moduleKeyboard.js'
+    const: './moduleConst.js',
+    keyboard: './moduleKeyboard.js',
   },
   output: {
     filename: '[name].bundle.js',
@@ -57,6 +58,7 @@ module.exports = {
     hot: isDev,
   },
   plugins: [
+    new CircularDependencyPlugin(),
     new HTMLWebpackPlugin({
       template: './index.html',
     }),
