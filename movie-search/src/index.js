@@ -1,8 +1,9 @@
 ﻿import './styles/style.css';
+import Swiper from 'swiper';
 import initKeyboard from './moduleKeyboard';
 import {
   KEYBOARD_CONTAINER, INPUT, LOADER_CONTAINER, SEARCH_BTN, CLEAR_BTN,
-  KEYBOARD_BTN, RESULT_CONTAINER, DOTS_CONTAINER, VOICE_BTN, isCyrillic,
+  KEYBOARD_BTN, RESULT_CONTAINER, DOTS_CONTAINER, VOICE_BTN, isCyrillic, delayDots,
 } from './moduleConst'
 
 let titleArray = [];
@@ -26,13 +27,15 @@ CLEAR_BTN.addEventListener('click', clearInput);
 KEYBOARD_BTN.addEventListener('click', addKeyboard);
 SEARCH_BTN.addEventListener('click', initSearch);
 VOICE_BTN.addEventListener('click', speakMovie);
+document.addEventListener('mousedown', clickEnter)
 document.querySelector('.swiper-button-next').addEventListener('click', addNewSlide);
-INPUT.addEventListener('keyup', (event) => {
-  event.preventDefault();
-  if (event.keyCode === 13) {
-    initSearch();
+INPUT.addEventListener('keydown', clickEnter)
+
+function clickEnter(event) {
+  if (event.target.textContent === 'Enter' || event.keyCode === 13) {
+    initSearch()
   }
-});
+}
 
 async function valueTranslate() {
   const url = `https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20200502T220917Z.cd9bb434abbf37f3.c07bdee9e96c935d70f599242ba2dd8c64fd0f9b&text=${inputCurrentValue}&lang=ru-en`;
@@ -42,7 +45,7 @@ async function valueTranslate() {
   getMovie();
 }
 
-export default function initSearch() {
+function initSearch() {
   tempPage = page;
   page = 1;
   tempInput = inputCurrentValue;
@@ -64,11 +67,13 @@ export default function initSearch() {
 
 function speakMovie() {
   recognition.start();
+  INPUT.value = '';
   INPUT.placeholder = 'Speak';
   recognition.addEventListener('end', initSearch);
 }
 
 recognition.interimResults = true;
+recognition.lang = 'en' && 'ru';
 
 recognition.addEventListener('result', (e) => {
   const transcript = Array.from(e.results)
@@ -86,11 +91,7 @@ function clearInput() {
 
 function addKeyboard() {
   INPUT.focus();
-  if (KEYBOARD_CONTAINER.className !== 'keyboard_container_visible') {
-    KEYBOARD_CONTAINER.classList.add('keyboard_container_visible');
-  } else {
-    KEYBOARD_CONTAINER.classList.remove('keyboard_container_visible');
-  }
+  KEYBOARD_CONTAINER.classList.toggle('keyboard_container_visible')
 }
 
 function clearArray() {
@@ -142,14 +143,18 @@ async function getMovie() {
       throw Error(data.Error);
     }
   } catch (error) {
-    RESULT_CONTAINER.classList.remove('hidden_result');
-    RESULT_CONTAINER.textContent = `${data.Error} No results for "${inputCurrentValue}"`
+    if (page === 1) {
+      RESULT_CONTAINER.classList.remove('hidden_result');
+      RESULT_CONTAINER.textContent = `${data.Error} No results for "${inputCurrentValue}"`
+    } else {
+      RESULT_CONTAINER.classList.remove('hidden_result');
+    }
   }
 
-  DOTS_CONTAINER.style.visibility = 'hidden';
-
+  setTimeout(dots, delayDots)
   if (data.Response === 'True') {
     page += 1;
+    tempInput = inputCurrentValue;
   } else {
     page = tempPage;
     inputCurrentValue = tempInput;
@@ -198,9 +203,16 @@ const mySwiper = new Swiper('.swiper-container', {
   },
 });
 
+
+function dots() {
+  DOTS_CONTAINER.style.visibility = 'hidden'
+}
+
 function addNewSlide() {
-  if (titleArray.length - mySwiper.realIndex < 5) {
-    getMovie();
+  if (document.querySelectorAll('.swiper-slide').length - mySwiper.realIndex < 5 && DOTS_CONTAINER.style.visibility === 'hidden') {
+    if (titleArray.length < resultCount) {
+      getMovie();
+    }
   }
 }
 
@@ -261,13 +273,13 @@ function addRaiting() {
   })
 }
 
-function init() {
+function initMovie() {
   inputCurrentValue = 'batman';
   getMovie();
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  init();
+  initMovie();
   INPUT.focus();
   initKeyboard();
 })
