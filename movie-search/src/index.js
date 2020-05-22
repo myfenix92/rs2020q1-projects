@@ -177,7 +177,7 @@ const mySwiper = new Swiper('.swiper-container', {
   loop: false,
   slidesPerView: 4,
   spaceBetween: 20,
-  grabCursor: true,
+  grabCursor: false,
   simulateTouch: true,
   breakpoints: {
     320: {
