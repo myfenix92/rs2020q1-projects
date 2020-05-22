@@ -52,7 +52,7 @@ function initSearch() {
   isTrue = true;
   INPUT.placeholder = 'Search Movie';
   KEYBOARD_CONTAINER.classList.add('keyboard_container_visible');
-  if (INPUT.value !== '') {
+  if (INPUT.value) {
     inputCurrentValue = INPUT.value;
     if (isCyrillic(inputCurrentValue)) {
       valueTranslate();
@@ -136,10 +136,10 @@ async function getMovie() {
       raitData.push(dataRait.imdbRating);
     }
 
-    if (INPUT.value !== '' && data.Response === 'True') {
+    if (INPUT.value && data.Response === 'True') {
       RESULT_CONTAINER.classList.remove('hidden_result');
       RESULT_CONTAINER.textContent = `Showing results for "${inputCurrentValue}". Find ${resultCount} results.`;
-    } else if (INPUT.value !== '' && data.Response === 'False') {
+    } else if (INPUT.value && data.Response === 'False') {
       throw Error(data.Error);
     }
   } catch (error) {
