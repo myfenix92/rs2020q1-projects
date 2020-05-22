@@ -4,6 +4,7 @@ import initKeyboard from './moduleKeyboard';
 import {
   KEYBOARD_CONTAINER, INPUT, LOADER_CONTAINER, SEARCH_BTN, CLEAR_BTN,
   KEYBOARD_BTN, RESULT_CONTAINER, DOTS_CONTAINER, VOICE_BTN, isCyrillic, delayDots,
+  translateUrl, translateKey, urlAPI, urlAPIkey, urlAPIrait
 } from './moduleConst'
 
 let titleArray = [];
@@ -38,7 +39,7 @@ function clickEnter(event) {
 }
 
 async function valueTranslate() {
-  const url = `https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20200502T220917Z.cd9bb434abbf37f3.c07bdee9e96c935d70f599242ba2dd8c64fd0f9b&text=${inputCurrentValue}&lang=ru-en`;
+  const url = `${translateUrl}${translateKey}${inputCurrentValue}&lang=ru-en`;
   const res = await fetch(url);
   const data = await res.json();
   inputCurrentValue = data.text[0].replace(/^The /gi, '');
@@ -104,7 +105,7 @@ function clearArray() {
 }
 
 async function getMovie() {
-  const url = `https://www.omdbapi.com/?s=${inputCurrentValue}&page=${page}&apikey=24f0fb79`;
+  const url = `${urlAPI}${inputCurrentValue}&page=${page}${urlAPIkey}`;
   RESULT_CONTAINER.classList.add('hidden_result');
   DOTS_CONTAINER.style.visibility = 'visible';
   const res = await fetch(url);
@@ -130,7 +131,7 @@ async function getMovie() {
     }
     for (let itemRait = raitingArray.length - itemSlide;
       itemRait < raitingArray.length; itemRait += 1) {
-      const urlRait = `https://www.omdbapi.com/?i=${raitingArray[itemRait]}&apikey=24f0fb79`;
+      const urlRait = `${urlAPIrait}${raitingArray[itemRait]}${urlAPIkey}`;
       const resRait = await fetch(urlRait);
       const dataRait = await resRait.json();
       raitData.push(dataRait.imdbRating);
