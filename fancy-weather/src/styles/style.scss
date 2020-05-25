@@ -1,0 +1,246 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
+
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  margin: 0;
+}
+
+.wrapper {
+  margin: 0 auto;
+  width: 150vh;
+  height: 100vh;
+  padding: 0 40px;
+  background-color: lightcoral;
+}
+
+header {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  padding-top: 20px;
+  align-items: baseline;
+}
+
+.input_panel {
+  text-align: right;
+}
+
+button,
+select {
+  color: white;
+  padding: 10px;
+}
+
+#refresh,
+#lang,
+.temp_btn {
+  background-color: grey;
+  width: 44px;
+  height: 44px;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#refresh {
+  position: relative;
+  top: 4px;
+}
+
+#lang {
+  width: 65px;
+}
+
+#lang:hover,
+.temp_btn:hover {
+  background: rgba(17, 141, 202, 0.7);
+}
+
+#refresh:hover {
+  background: rgba(17, 141, 202, 0.7);
+
+  img {
+    animation: 1s linear 0s normal none infinite running rot;
+    -webkit-animation: 1s linear 0s normal none infinite running rot;
+  }
+
+  @keyframes rot {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @-webkit-keyframes rot {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+}
+
+.temp_btn {
+  margin-right: -4px;
+}
+
+#temp-f {
+  border-radius: 5px 0 0 5px;
+}
+
+#temp-c {
+  border-radius: 0 5px 5px 0px;
+}
+
+.active_temp {
+  background-color: rgba(42, 164, 224, 0.7);
+  ;
+}
+
+input {
+  width: 50%;
+  height: 20px;
+  border: 1px solid white;
+  outline: none;
+  background-color: grey;
+  opacity: 0.5;
+  padding: 10px;
+  font-size: 16px;
+  color: white;
+  padding-right: 50px;
+}
+
+input::-webkit-input-placeholder {
+  color: rgb(0, 47, 255);
+}
+
+.micro_btn {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  top: 4.2%;
+  right: 19.2%;
+  cursor: pointer;
+  fill: white;
+}
+
+.micro_btn:hover {
+  fill: rgba(17, 141, 202, 0.7);
+}
+
+#micro_icon:focus {
+  fill: red;
+  outline: none;
+}
+
+#search {
+  color: white;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: -4px;
+  padding: 12px;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  outline: none;
+  cursor: pointer;
+  background-color: grey;
+}
+
+main {
+  margin-bottom: 50px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.block_weather {
+  text-align: left;
+  margin-top: 10px;
+}
+
+.block_city {
+  font-size: 44px;
+  max-width: 702px;
+  white-space: nowrap;
+  // overflow-x: scroll;
+}
+
+.block_date {
+  font-size: 24px;
+}
+
+.block_map {
+  text-align: center;
+}
+
+.block_today {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+}
+
+.block_temp {
+  font-size: 300px;
+  position: relative;
+}
+
+.temp_today {
+  margin: 0;
+}
+
+.img_weather {
+  position: absolute;
+  top: -61%;
+  left: 58%;
+}
+
+.block_about_weather {
+  font-size: 22px;
+  margin-top: 85px;
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+.block_days_weather {
+  margin-top: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.block_day {
+  position: relative;
+}
+
+.img_weather_day {
+  position: absolute;
+  top: 50%;
+  left: 90%;
+}
+
+.day_week {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.day_temp {
+  font-size: 80px;
+  margin-top: -35px;
+  margin-bottom: 0;
+}
+
+.block_map {
+  margin-top: 100px;
+  margin-left: 42px;
+}
+
+.coordinates {
+  font-size: 20px;
+}
