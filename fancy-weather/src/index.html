@@ -7,7 +7,7 @@
   <title>Fancy Weather</title>
 </head>
 <body>
-  <div class="wrapper">
+  <div id="wrapper_block" class="wrapper">
     <header>
       <div class="nav_panel">
         <button id="refresh"><img src="src/assets/refresh.png" alt=""></button>
@@ -17,7 +17,7 @@
           <option value="be">BE</option>
         </select>
         <button class="temp_btn" id="temp-f">F&deg;</button>
-        <button class="temp_btn" id="temp-c">C&deg;</button>
+        <button class="temp_btn active_temp" id="temp-c">C&deg;</button>
       </div>
       <div class="input_panel">
         <input type="text" placeholder="Search city or ZIP">
@@ -37,31 +37,31 @@
         </div>
         <div class="block_today">
           <div class="block_temp">
-            <p class="temp_today"><span class="temp_today_data">20</span>&deg;</p>
-            <div class="img_weather"><img src="src/assets/weather.png" alt=""></div>
+            <p class="temp_today"><span class="temp_today_data"></span>&deg;</p>
+            <div class="img_weather"><img class="" src="" alt=""></div>
           </div>
           <div class="block_about_weather">
-            <p class="summary">Sunny</p>
-            <p class="apparent_temp">Feels Like: <span class="apparent_temp_data">7</span>&deg;</p>
-            <p class="wind">Wind: <span class="wind_data">5</span> m/s</p>
-            <p class="humidity">Humidity: <spanc class="humidity_data">34</span>%</p>
+            <p class="summary"></p>
+            <p class="apparent_temp">Feels Like: <span class="apparent_temp_data"></span>&deg;</p>
+            <p class="wind">Wind: <span class="wind_data"></span> m/s</p>
+            <p class="humidity">Humidity: <spanc class="humidity_data"></span>%</p>
           </div>
         </div>
         <div class="block_days_weather">
           <div class="block_day">
             <p class="day_week">Tuesday</p>
-            <p class="day_temp"><span class="day_temp_data">7</span>&deg;</p>
-            <div class="img_weather_day"><img src="src/assets/day_weather.png" alt=""></div>
+            <p class="day_temp"><span class="day_temp_data"></span>&deg;</p>
+            <div class="weather_day"><img class="img_weather_day" src="" alt=""></div>
           </div>
           <div class="block_day">
             <p class="day_week">Tuesday</p>
-            <p class="day_temp"><span class="day_temp_data">7</span>&deg;</p>
-            <div class="img_weather_day"><img src="src/assets/day_weather.png" alt=""></div>
+            <p class="day_temp"><span class="day_temp_data"></span>&deg;</p>
+            <div class="weather_day"><img class="img_weather_day" src="" alt=""></div>
           </div>
           <div class="block_day">
             <p class="day_week">Tuesday</p>
-            <p class="day_temp"><span class="day_temp_data">7</span>&deg;</p>
-            <div class="img_weather_day"><img src="src/assets/day_weather.png" alt=""></div>
+            <p class="day_temp"><span class="day_temp_data"></span>&deg;</p>
+            <div class="weather_day"><img class="img_weather_day" src="" alt=""></div>
           </div>
         </div>
       </div>
@@ -78,6 +78,6 @@
     <footer>
       <marquee behavior="scroll" direction="left">Мб добавить доп.инфу</marquee>
     </footer>
-  </div>
+</div>
 </body>
 </html>
