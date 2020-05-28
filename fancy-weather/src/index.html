@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css" rel="stylesheet" />
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>Fancy Weather</title>
 </head>
@@ -12,15 +14,15 @@
       <div class="nav_panel">
         <button id="refresh"><img src="src/assets/refresh.png" alt=""></button>
         <select name="lang_value" id="lang">
+          <option value="en">EN</option>
           <option value="ru">RU</option>
-          <option value="eng">EN</option>
           <option value="be">BE</option>
         </select>
         <button class="temp_btn" id="temp-f">F&deg;</button>
         <button class="temp_btn active_temp" id="temp-c">C&deg;</button>
       </div>
       <div class="input_panel">
-        <input type="text" placeholder="Search city or ZIP">
+        <input id="input_search" type="text" placeholder="Search city or ZIP">
         <button id="search">search</button>
         <span class="micro_btn"><svg tabindex="0" id="micro_icon" width="16" height="18" viewBox="0 0 16 18"
             xmlns="http://www.w3.org/2000/svg">
@@ -32,7 +34,7 @@
     <main>
       <div class="block_weather">
         <div class="block_title">
-          <p class="block_city">Noginsk, Russia</p>
+          <p class="block_city"></p>
           <p class="block_date"><span class="block_date_day"></span><span class="block_time"></span></p>
         </div>
         <div class="block_today">
@@ -43,41 +45,40 @@
           <div class="block_about_weather">
             <p class="summary"></p>
             <p class="apparent_temp">Feels Like: <span class="apparent_temp_data"></span>&deg;</p>
-            <p class="wind">Wind: <span class="wind_data"></span> m/s</p>
-            <p class="humidity">Humidity: <spanc class="humidity_data"></span>%</p>
+            <p class="wind">Wind: <span class="wind_data"></span> m/s; <span class="wind_direction"></span></p>
+            <p class="humidity">Humidity: <span class="humidity_data"></span>%</p>
+            <p class="precipitation">Precipitation: <span class="precipitation_data"></span> mm/hr</p>
+            <p class="pressure">Pressure: <span class="pressure_data"></span> mmHg</p>
           </div>
         </div>
         <div class="block_days_weather">
           <div class="block_day">
-            <p class="day_week">Tuesday</p>
+            <p class="day_week"></p>
             <p class="day_temp"><span class="day_temp_data"></span>&deg;</p>
             <div class="weather_day"><img class="img_weather_day" src="" alt=""></div>
           </div>
           <div class="block_day">
-            <p class="day_week">Tuesday</p>
+            <p class="day_week"></p>
             <p class="day_temp"><span class="day_temp_data"></span>&deg;</p>
             <div class="weather_day"><img class="img_weather_day" src="" alt=""></div>
           </div>
           <div class="block_day">
-            <p class="day_week">Tuesday</p>
+            <p class="day_week"></p>
             <p class="day_temp"><span class="day_temp_data"></span>&deg;</p>
             <div class="weather_day"><img class="img_weather_day" src="" alt=""></div>
           </div>
         </div>
       </div>
       <div class="block_map">
-        <div class="map">
-          <img src="src/assets/google.png" alt="">
-        </div>
-        <div class="coordinates">
-          <p class="latitude">Latitude: <span class="latitude_data">54&deg; 56' 55"</span></p>
-          <p class="longitude">Longitude: <span class="longitude_data">54&deg; 56' 88"</span></p>
-        </div>
+      <div id="map"></div>
+      <div class="coordinates">
+        <p class="latitude">Latitude: <span class="latitude_data"></span></p>
+        <p class="longitude">Longitude: <span class="longitude_data"></span></p>
       </div>
+    </div>
     </main>
-    <footer>
-      <marquee behavior="scroll" direction="left">Мб добавить доп.инфу</marquee>
-    </footer>
 </div>
+
+
 </body>
 </html>
