@@ -9,6 +9,7 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const TerserWebpackPlugin = require('terser-webpack-plugin')
 
 const isDev = process.env.NODE_ENV === 'development'
+console.log(isDev)
 const isProd = !isDev
 
 const optimization = () => {
@@ -66,7 +67,9 @@ module.exports = {
   mode: 'development',
   entry: {
     main: ['@babel/polyfill', './index.js'],
-    post: './post.js',
+    svgImg: './svgModule.js',
+    translate: './translateModule.js',
+    helper: './helperModule.js',
   },
   output: {
     filename: "[name].bundle.js",
@@ -89,6 +92,10 @@ module.exports = {
       patterns: [{
         from: path.resolve(__dirname, 'src/favicon.ico'),
         to: path.resolve(__dirname, 'dist'),
+      },
+      {
+        from: path.resolve(__dirname, 'src/assets'),
+        to: path.resolve(__dirname, 'dist/img'),
       }],
     }),
     new MiniCssExtractPlugin({
