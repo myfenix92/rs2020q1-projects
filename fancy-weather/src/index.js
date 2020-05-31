@@ -1,88 +1,83 @@
-﻿/* eslint-disable no-undef */
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-unused-vars */
-import './styles/style.css';
-import { svg } from './svgImageModule';
+﻿import './styles/style.css';
+import svgImage from './svgModule';
+import translateValue from './translateModule';
+import {
+  REFRESH, F_TEMP, BODY, C_TEMP, tempToday, summaryToday, apparentTemp, windData,
+  humidityToday, imgWeatherToday, tempDay, weatherImg, NAME_LOCATION, precipitationData,
+  pressureData, INPUT, LAT_FIELD, LNG_FIELD, SEARCH_BTN, LANG, VOICE_BTN, LISTEN_BTN,
+  date, dayWeekWeather, synth, message, messageSecond, imgApi, imgApiKey, geoApi,
+  geoApiKey, mapKey, weatherApi, weatherApiField, weatherApiKey, apparentToday, windToday,
+  precipitationToday, pressureToday, latitude, longitude, humidityData,
+} from './constModule';
+import { GetRandom, activeClassResresh } from './helperModule';
 
-const objToday = new Date();
-const weekdayShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const weekdayLong = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const dayOfWeek = weekdayShort[objToday.getDay()];
-const dayOfMonth = objToday.getDate();
-const monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const curMonth = monthArray[objToday.getMonth()];
-const today = `${dayOfWeek} ${dayOfMonth} ${curMonth}`;
-const REFRESH = document.getElementById('refresh');
-const BODY = document.querySelector('body');
-const F_TEMP = document.getElementById('temp-f');
-const C_TEMP = document.getElementById('temp-c');
-const tempToday = document.querySelector('.temp_today_data');
-const summaryToday = document.querySelector('.summary');
-const apparentTemp = document.querySelector('.apparent_temp_data');
-const windToday = document.querySelector('.wind_data');
-const humidityToday = document.querySelector('.humidity_data');
-const imgWeatherToday = document.querySelector('.img_weather > img');
-const tempDay = document.querySelectorAll('.day_temp_data');
-const weatherImg = document.querySelectorAll('.img_weather_day');
-const NAME_LOCATION = document.querySelector('.block_city');
-const windDirection = document.querySelector('.wind_direction');
-const precipitationData = document.querySelector('.precipitation_data');
-const pressureData = document.querySelector('.pressure_data');
-const INPUT = document.getElementById('input_search');
-const LAT_FIELD = document.querySelector('.latitude_data');
-const LNG_FIELD = document.querySelector('.longitude_data');
-const SEARCH_BTN = document.getElementById('search');
-const LANG = document.getElementById('lang');
-const VOICE_BTN = document.querySelector('.micro_btn');
-
+let currentTimeZone;
+let curTimeZoneHour;
+let imgWeatherDay;
+let summaryData;
+let numberWeek;
+let tempNumberWeek;
 let inputValue;
+// eslint-disable-next-line no-unused-vars
 let TEMP_BTN;
 let langDate;
 let locationData;
 let timeDay;
+let isSearch = false;
+let transValue;
 
-const time = setInterval(() => {
-  const date = new Date();
-  const curSeconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds();
-  const curMinute = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-  document.querySelector('.block_date_day').textContent = `${today}`;
-  document.querySelector('.block_time').textContent = `${date.getHours()}:${curMinute}:${curSeconds}`;
-}, 1000);
+function getTime() {
+  const curDate = new Date();
+  const dayOfWeek = translateValue.weekShort[langDate][date.getDay()];
+  const dayOfMonth = date.getDate();
+  const curMonth = translateValue.month[langDate][date.getMonth()];
+  const today = `${dayOfWeek} ${dayOfMonth} ${curMonth}`;
+  const curSeconds = curDate.getSeconds() < 10 ? `0${curDate.getSeconds()}` : curDate.getSeconds();
+  const curMinute = curDate.getMinutes() < 10 ? `0${curDate.getMinutes()}` : curDate.getMinutes();
+  curTimeZoneHour = curDate.getHours() + currentTimeZone - (-curDate.getTimezoneOffset() / 60);
+  if (curTimeZoneHour > 23) {
+    curTimeZoneHour -= 24;
+  }
 
-REFRESH.addEventListener('click', ChangeLink, false);
-F_TEMP.addEventListener('click', changeTempToFahrenheit);
-C_TEMP.addEventListener('click', changeTempToCelsius);
-SEARCH_BTN.addEventListener('click', searchLocation);
-INPUT.addEventListener('keydown', clickEnter);
-LANG.addEventListener('click', changeLang);
-VOICE_BTN.addEventListener('click', speakMovie);
-
-window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
-
-function GetRandom() {
-  const max = 1000000;
-  const min = 1;
-  return Math.floor(Math.random() * max + min);
+  if (date.getHours() + currentTimeZone > 23) {
+    document.querySelector('.block_date_day_local').textContent = `${translateValue.timeLocalZone[LANG.value]} ${
+      translateValue.weekShort[langDate][date.getDay() + 1]} ${date.getDate() + 1} ${curMonth}`;
+    document.querySelector('.block_time_local').textContent = `${curTimeZoneHour}:${curMinute}:${curSeconds}`;
+  } else {
+    document.querySelector('.block_date_day_local').textContent = `${translateValue.timeLocalZone[LANG.value]} ${today}`;
+    document.querySelector('.block_time_local').textContent = `${curTimeZoneHour}:${curMinute}:${curSeconds}`;
+  }
+  document.querySelector('.block_date_day').textContent = `${translateValue.timeStandartZone[LANG.value]} ${today}`;
+  document.querySelector('.block_time').textContent = `${curDate.getHours()}:${curMinute}:${curSeconds}`;
 }
 
-function speakMovie() {
-  recognition.start();
-  INPUT.value = '';
-  INPUT.placeholder = 'Speak';
-  recognition.addEventListener('end', searchLocation);
+function listenWeather() {
+  message.lang = LANG.value;
+  message.rate = 0.8;
+  messageSecond.lang = LANG.value;
+  messageSecond.rate = 0.8;
+  if (LANG.value === 'en') {
+    message.rate = 0.6;
+    messageSecond.rate = 0.6;
+  }
+  message.text = `${translateValue.today[LANG.value]} ${document.querySelector('.summary').textContent}.
+  ${translateValue.tempToday[LANG.value]} ${tempToday.textContent} ${translateValue.degrees[LANG.value]}.
+  ${translateValue.feel[LANG.value]} ${apparentTemp.textContent} ${translateValue.degrees[LANG.value]}.
+  ${translateValue.speed[LANG.value]} ${windData.textContent} ${translateValue.metrSec[LANG.value]}.`;
+  messageSecond.text = `${translateValue.humidity[LANG.value]} ${humidityData.textContent}
+  ${translateValue.percent[LANG.value]}. ${translateValue.precipitation[LANG.value]} 
+  ${precipitationData.textContent} ${translateValue.millimeters[LANG.value]}. 
+  ${translateValue.atmPressure[LANG.value]} ${pressureData.textContent} ${translateValue.presMillimeters[LANG.value]}.`;
+  synth.speak(message);
+  synth.speak(messageSecond);
 }
 
-recognition.interimResults = true;
-recognition.lang = 'en' && 'ru';
-
-recognition.addEventListener('result', (e) => {
-  const transcript = Array.from(e.results)
-    .map((result) => result[0])
-    .map((result) => result.transcript)
-    .join('');
-  INPUT.value = transcript;
-});
+message.onstart = function () {
+  LISTEN_BTN.classList.add('listen_active');
+};
+messageSecond.onend = function () {
+  LISTEN_BTN.classList.remove('listen_active');
+};
 
 function getTimeDay() {
   const hourData = new Date().getHours();
@@ -106,17 +101,45 @@ function getTimeDay() {
 async function ChangeLink() {
   const random = GetRandom();
   const dateHour = getTimeDay();
-  const url = `https://api.unsplash.com/photos/random?orientation=landscape&per_page=${random}&query=nature,${dateHour}&client_id=iUWFazITLIp6OVqPGdpqeut-qVTFn_4qW4wtRLr_tGs`;
-  const res = await fetch(url);
-  const data = await res.json();
-  const imgUrl = data.urls.regular;
-  REFRESH.classList.add('active_refresh');
-  setTimeout(active, 1000);
-  BODY.style.backgroundImage = `url('${imgUrl}')`;
+  try {
+    const url = `${imgApi}${random}&query=nature,beautiful,${dateHour}&client_id=${imgApiKey}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const imgUrl = data.urls.regular;
+    REFRESH.classList.add('active_refresh');
+    setTimeout(activeClassResresh, 1000);
+    BODY.style.backgroundImage = `url('${imgUrl}')`;
+  } catch (error) {
+    console.log('Rate Limit Exceeded. 50 запросов в час.');
+    BODY.style.backgroundImage = `url(./img/wrapper-bg.jpg)`;
+  }
 }
 
-function active() {
-  REFRESH.classList.remove('active_refresh');
+function changeWeek() {
+  tempNumberWeek = numberWeek;
+  if (date.getHours() + currentTimeZone > 23) {
+    numberWeek += 1;
+  }
+  dayWeekWeather.forEach((e) => {
+    if (numberWeek === 6) {
+      numberWeek = 0;
+    } else {
+      numberWeek += 1;
+    }
+    e.textContent = translateValue.weekLong[langDate][numberWeek];
+  });
+  numberWeek = tempNumberWeek;
+}
+
+
+function changeTemp() {
+  localStorage.setItem('temp', document.querySelector('.active_temp').textContent);
+}
+
+function changeLang() {
+  localStorage.setItem('lang', LANG.value);
+  langDate = LANG.value;
+  return langDate;
 }
 
 function changeTempToFahrenheit() {
@@ -135,12 +158,6 @@ function changeTempToFahrenheit() {
   });
 }
 
-function changeLang() {
-  localStorage.setItem('lang', LANG.value);
-  langDate = LANG.value;
-  return langDate;
-}
-
 function changeTempToCelsius() {
   F_TEMP.classList.remove('active_temp');
   C_TEMP.classList.add('active_temp');
@@ -157,8 +174,133 @@ function changeTempToCelsius() {
   });
 }
 
-function changeTemp() {
-  localStorage.setItem('temp', document.querySelector('.active_temp').textContent);
+async function getNameLocation() {
+  changeLang();
+  changeWeek();
+  inputValue = NAME_LOCATION.textContent;
+  const url = `${geoApi}${inputValue}${geoApiKey}&language=${langDate}&pretty=1`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const delComma = data.results[0].formatted.indexOf(',');
+  const nameCity = data.results[0].formatted.slice(0, delComma);
+  NAME_LOCATION.textContent = `${nameCity}, ${data.results[0].components.country}`;
+  inputValue = '';
+}
+
+function translate() {
+  synth.cancel();
+  LISTEN_BTN.classList.remove('listen_active');
+  INPUT.placeholder = translateValue.placeholder[LANG.value];
+  SEARCH_BTN.textContent = translateValue.search[LANG.value];
+  getNameLocation();
+  if (Object.prototype.hasOwnProperty.call(translateValue.summary, summaryData)) {
+    summaryToday.textContent = `${translateValue.summary[summaryData][LANG.value]}`;
+    apparentToday.textContent = `${translateValue.feel[LANG.value]} ${apparentTemp.textContent}°`;
+    windToday.textContent = `${translateValue.wind[LANG.value]} ${windData.textContent} ${translateValue.windValue[LANG.value]}`;
+    humidityToday.textContent = `${translateValue.humidity[LANG.value]} ${humidityData.textContent}%`;
+    precipitationToday.textContent = `${translateValue.precipitation[LANG.value]} ${precipitationData.textContent} ${translateValue.precipitationValue[LANG.value]}`;
+    pressureToday.textContent = `${translateValue.pressure[LANG.value]} ${pressureData.textContent} ${translateValue.pressureValue[LANG.value]}`;
+    latitude.textContent = `${translateValue.lat[LANG.value]}${LAT_FIELD.textContent}`;
+    longitude.textContent = `${translateValue.lng[LANG.value]}${LNG_FIELD.textContent}`;
+  }
+}
+
+async function getWeather() {
+  numberWeek = date.getDay();
+  ChangeLink();
+  changeWeek();
+  LISTEN_BTN.classList.remove('listen_active');
+  VOICE_BTN.classList.remove('micro_active');
+  synth.cancel();
+  const url = `${weatherApi}lat=${locationData.lat}&lon=${locationData.lon}${weatherApiField}&apikey=${weatherApiKey}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const weather = data[0].weather_code.value;
+  const feel = Math.round(data[0].feels_like[1].max.value);
+  const temp = Math.round(data[0].temp[1].max.value);
+  const wind = data[0].wind_speed[1].max.value.toFixed(1);
+  const precipitation = data[0].precipitation[0].max.value.toFixed(2);
+  const humidity = Math.round(data[0].humidity[0].min.value);
+  const pressure = Math.round((((data[0].baro_pressure[1].max.value) / 133.3224) * 100));
+
+  tempToday.textContent = temp;
+  summaryData = weather;
+  apparentTemp.textContent = feel;
+  windData.textContent = wind;
+  humidityData.textContent = humidity;
+  precipitationData.textContent = precipitation;
+  pressureData.textContent = pressure;
+  imgWeatherToday.innerHTML = svgImage[weather];
+
+  translate();
+  let indexTemp = 1;
+  tempDay.forEach((e) => {
+    e.textContent = Math.round(data[indexTemp].temp[1].max.value);
+    indexTemp += 1;
+  });
+
+  weatherImg.forEach((e) => {
+    imgWeatherDay = data[indexTemp].weather_code.value;
+    e.innerHTML = svgImage[imgWeatherDay];
+    indexTemp += 1;
+  });
+
+  if (localStorage.getItem('temp') === 'F°') {
+    changeTempToFahrenheit();
+  }
+}
+
+function getMap() {
+  // eslint-disable-next-line no-undef
+  const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: locationData,
+    zoom: 8,
+    attributionControl: false,
+    accessToken: `${mapKey}`,
+  });
+  // eslint-disable-next-line no-undef
+  new mapboxgl.Marker()
+    .setLngLat(locationData)
+    .addTo(map);
+}
+
+async function searchLocation() {
+  changeLang();
+  if (!inputValue) {
+    inputValue = INPUT.value;
+  }
+  const url = `${geoApi}${inputValue}${geoApiKey}&language=${langDate}&pretty=1`;
+  const res = await fetch(url);
+  const data = await res.json();
+  try {
+    if (data.total_results !== 0) {
+      LAT_FIELD.textContent = data.results[0].annotations.DMS.lat;
+      LNG_FIELD.textContent = data.results[0].annotations.DMS.lng;
+      const { lat } = data.results[0].geometry;
+      const lon = data.results[0].geometry.lng;
+      const delComma = data.results[0].formatted.indexOf(',');
+      const nameCity = data.results[0].formatted.slice(0, delComma);
+      NAME_LOCATION.textContent = `${nameCity}, ${data.results[0].components.country}`;
+      currentTimeZone = +data.results[0].annotations.timezone.offset_string.slice(0, 3);
+      const location = {
+        lat,
+        lon,
+      };
+      locationData = location;
+      getMap();
+      getWeather();
+      INPUT.placeholder = 'Search city or ZIP';
+    } else {
+      throw Error();
+    }
+  } catch (error) {
+    console.log(data.status.code, data.status.message);
+    INPUT.value = '';
+    INPUT.placeholder = 'Invalid request. Please, try again';
+  }
+  inputValue = '';
 }
 
 async function getUserLocation() {
@@ -177,46 +319,60 @@ async function getUserLocation() {
   searchLocation();
 }
 
-async function searchLocation() {
-  changeLang();
-  if (!inputValue) {
-    inputValue = INPUT.value;
+window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+// eslint-disable-next-line no-undef
+const recognition = new SpeechRecognition();
+recognition.interimResults = true;
+
+function speakMovie() {
+  if (localStorage.getItem('lang') === 'ru') {
+    recognition.lang = 'ru';
+  } else if (localStorage.getItem('lang') === 'en') {
+    recognition.lang = 'en';
   }
-  const url = `https://api.opencagedata.com/geocode/v1/json?q=${inputValue}&key=c22238163fb1499cbd75849a97fd0516&language=${langDate}&pretty=1`;
-  const res = await fetch(url);
-  const data = await res.json();
-  LAT_FIELD.textContent = data.results[0].annotations.DMS.lat;
-  LNG_FIELD.textContent = data.results[0].annotations.DMS.lng;
-  const { lat } = data.results[0].geometry;
-  const lon = data.results[0].geometry.lng;
-  const delComma = data.results[0].formatted.indexOf(',');
-  const nameCity = data.results[0].formatted.slice(0, delComma);
-  NAME_LOCATION.textContent = `${nameCity}, ${data.results[0].components.country}`;
-
-  const location = {
-    lon,
-    lat,
-  };
-
-  locationData = location;
-  getMap();
-  getWeather();
-  inputValue = '';
-}
-
-function getMap() {
-  const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11',
-    center: locationData,
-    zoom: 8,
-    attributionControl: true,
-    accessToken: 'pk.eyJ1IjoibXlmZW5peDkyIiwiYSI6ImNrYXBpdXhwMTF5NTYzMXA2emY0M3pnd24ifQ.I73eBezMUvPr3OAN-aF1Cg',
+  VOICE_BTN.classList.add('micro_active');
+  isSearch = true;
+  recognition.start();
+  INPUT.value = '';
+  recognition.addEventListener('end', () => {
+    VOICE_BTN.classList.remove('micro_active');
   });
-  const marker = new mapboxgl.Marker()
-    .setLngLat(locationData)
-    .addTo(map);
 }
+
+function talk() {
+  if (isSearch) {
+    if (transValue.includes('forecast') || transValue.includes('прогноз')) {
+      listenWeather();
+    } else if (transValue.includes('louder') || transValue.includes('громче')) {
+      synth.cancel();
+      message.volume = 1;
+      messageSecond.volume = 1;
+      listenWeather();
+    } else if (transValue.includes('quieter') || transValue.includes('тише')) {
+      synth.cancel();
+      message.volume = 0.4;
+      messageSecond.volume = 0.4;
+      listenWeather();
+    } else if (transValue.includes('stop') || transValue.includes('стоп')) {
+      synth.cancel();
+      LISTEN_BTN.classList.remove('listen_active');
+    } else {
+      INPUT.value = transValue;
+      searchLocation();
+    }
+  }
+  isSearch = false;
+}
+
+recognition.addEventListener('result', (e) => {
+  const transcript = Array.from(e.results)
+    .map((result) => result[0])
+    .map((result) => result.transcript)
+    .join('');
+
+  transValue = transcript;
+  setTimeout(talk, 1000);
+});
 
 function clickEnter(event) {
   if (event.keyCode === 13) {
@@ -224,72 +380,19 @@ function clickEnter(event) {
   }
 }
 
-async function getWeather() {
-  ChangeLink();
-  const url = `https://api.climacell.co/v3/weather/forecast/daily?lat=${locationData.lat}&lon=${locationData.lon}&unit_system=si&start_time=now&fields=feels_like%2Cbaro_pressure%2Cprecipitation%2Cwind_direction%2Ctemp%2Chumidity%2Cwind_speed%2Cweather_code&apikey=qOLLc9CJwqBIVL1lP9fE5IjDb3kzoL2x`;
-  const res = await fetch(url);
-  const data = await res.json();
-  const weather = data[0].weather_code.value;
-  const feel = Math.round(data[0].feels_like[1].max.value);
-  const temp = Math.round(data[0].temp[1].max.value);
-  const wind = data[0].wind_speed[1].max.value.toFixed(1);
-  const windDirect = data[0].wind_direction[1].max.value;
-  const precipitation = data[0].precipitation[0].max.value.toFixed(2);
-  const humidity = data[0].humidity[0].min.value;
-  const pressure = (((data[0].baro_pressure[1].max.value) / 133.3224) * 100).toFixed(2);
-
-  if ((windDirect >= 0 && windDirect < 22.5) && (windDirect >= 337.5 && windDirect <= 360)) {
-    windDirection.textContent = `N`;
-  }
-  if (windDirect >= 22.5 && windDirect < 67.5) {
-    windDirection.textContent = `NE`;
-  }
-  if (windDirect >= 67.5 && windDirect < 112.5) {
-    windDirection.textContent = `E`;
-  }
-  if (windDirect >= 112.5 && windDirect < 157.5) {
-    windDirection.textContent = `SE`;
-  }
-  if (windDirect >= 157.5 && windDirect < 202.5) {
-    windDirection.textContent = `S`;
-  }
-  if (windDirect >= 202.5 && windDirect < 247.5) {
-    windDirection.textContent = `SW`;
-  }
-  if (windDirect >= 247.5 && windDirect < 292.5) {
-    windDirection.textContent = `W`;
-  }
-  if (windDirect >= 292.5 && windDirect < 337.5) {
-    windDirection.textContent = `NW`;
-  }
-
-  tempToday.textContent = temp;
-  summaryToday.textContent = weather.replace('_', ' ');
-  summaryToday.textContent = summaryToday.textContent.charAt(0).toUpperCase()
-   + summaryToday.textContent.slice(1);
-  apparentTemp.textContent = feel;
-  windToday.textContent = wind;
-  humidityToday.textContent = humidity;
-  precipitationData.textContent = precipitation;
-  pressureData.textContent = pressure;
-  imgWeatherToday.src = `src/assets/${weather}.svg`;
-
-  let indexTemp = 1;
-  tempDay.forEach((e) => {
-    e.textContent = Math.round(data[indexTemp].temp[1].max.value);
-    indexTemp += 1;
-  });
-
-  weatherImg.forEach((e) => {
-    e.src = `src/assets/${data[indexTemp].weather_code.value}.svg`;
-    indexTemp += 1;
-  });
-
-  if (localStorage.getItem('temp') === 'F°') {
-    changeTempToFahrenheit();
-  }
-}
+REFRESH.addEventListener('click', getWeather);
+F_TEMP.addEventListener('click', changeTempToFahrenheit);
+C_TEMP.addEventListener('click', changeTempToCelsius);
+SEARCH_BTN.addEventListener('click', searchLocation);
+INPUT.addEventListener('keydown', clickEnter);
+LANG.addEventListener('click', changeLang);
+VOICE_BTN.addEventListener('click', speakMovie);
+LISTEN_BTN.addEventListener('click', listenWeather);
+LANG.addEventListener('change', translate);
 
 window.addEventListener('DOMContentLoaded', () => {
+  LANG.options.selectedIndex = 0;
+  synth.cancel();
+  setInterval(getTime, 1000);
   getUserLocation();
 });
