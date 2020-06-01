@@ -35,11 +35,11 @@ function getTime() {
   const curSeconds = curDate.getSeconds() < 10 ? `0${curDate.getSeconds()}` : curDate.getSeconds();
   const curMinute = curDate.getMinutes() < 10 ? `0${curDate.getMinutes()}` : curDate.getMinutes();
   curTimeZoneHour = curDate.getHours() + currentTimeZone - (-curDate.getTimezoneOffset() / 60);
-  if (curTimeZoneHour > 23) {
+  if (curTimeZoneHour > 24) {
     curTimeZoneHour -= 24;
   }
 
-  if (date.getHours() + currentTimeZone > 23) {
+  if (date.getHours() + currentTimeZone - (-curDate.getTimezoneOffset() / 60) > 24) {
     document.querySelector('.block_date_day_local').textContent = `${translateValue.timeLocalZone[LANG.value]} ${
       translateValue.weekShort[langDate][date.getDay() + 1]} ${date.getDate() + 1} ${curMonth}`;
     document.querySelector('.block_time_local').textContent = `${curTimeZoneHour}:${curMinute}:${curSeconds}`;
@@ -117,7 +117,7 @@ async function ChangeLink() {
 
 function changeWeek() {
   tempNumberWeek = numberWeek;
-  if (date.getHours() + currentTimeZone > 23) {
+  if (date.getHours() + currentTimeZone > 24) {
     numberWeek += 1;
   }
   dayWeekWeather.forEach((e) => {
@@ -164,7 +164,7 @@ function changeTempToCelsius() {
   TEMP_BTN = document.querySelector('.active_temp');
   changeTemp();
   const toCelsius = Math.round(((Math.round(tempToday.textContent) - 32) * 5) / 9);
-  const toCelsiusApparent = Math.round(((Math.round(tempToday.textContent) - 32) * 5) / 9);
+  const toCelsiusApparent = Math.round(((Math.round(apparentTemp.textContent) - 32) * 5) / 9);
 
   tempToday.textContent = toCelsius;
   apparentTemp.textContent = toCelsiusApparent;
@@ -195,7 +195,7 @@ function translate() {
   getNameLocation();
   if (Object.prototype.hasOwnProperty.call(translateValue.summary, summaryData)) {
     summaryToday.textContent = `${translateValue.summary[summaryData][LANG.value]}`;
-    apparentToday.textContent = `${translateValue.feel[LANG.value]} ${apparentTemp.textContent}°`;
+    apparentToday.textContent = `${translateValue.feel[LANG.value]}`;
     windToday.textContent = `${translateValue.wind[LANG.value]} ${windData.textContent} ${translateValue.windValue[LANG.value]}`;
     humidityToday.textContent = `${translateValue.humidity[LANG.value]} ${humidityData.textContent}%`;
     precipitationToday.textContent = `${translateValue.precipitation[LANG.value]} ${precipitationData.textContent} ${translateValue.precipitationValue[LANG.value]}`;
