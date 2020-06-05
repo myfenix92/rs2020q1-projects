@@ -58,6 +58,7 @@ module.exports = {
     hot: isDev,
   },
   plugins: [
+
     new CircularDependencyPlugin(),
     new HTMLWebpackPlugin({
       template: './index.html',
