@@ -1,0 +1,49 @@
+﻿<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/swiper/css/swiper.min.css">
+  <title>Movie Search</title>
+</head>
+<body>
+  <header>
+    <div class="header_content">
+      <h1 class="header_content_title">Movie Search</h1>
+    </div>
+  </header>
+  <main>
+    <div class="search_container">
+      <div class="input_container">
+        <input type="text" name="" id="search_input" autocomplete="off" autofocus placeholder="Search Movie">
+        <button class="search_btn" id="btn" type="button" data-name="search">Search</button>
+        <button class="search_btn_voice" id="btn_voice" type="button" data-name="voice"></button>
+        <span class="clear" data-title="Clear"></span>
+        <span class="keyboard_icon" data-title="Keyboard"></span>
+      </div>
+      <div id="keyboard_container_movie" class="keyboard_container_visible"></div>
+      <div id="loader">
+        <div class="dots">
+          <div class="dot dot-1"></div>
+          <div class="dot dot-2"></div>
+          <div class="dot dot-3"></div>
+        </div>
+        <p class="result_field hidden_result"></p>
+      </div>
+      <div id="slider_container" class="slider">
+        <div class="swiper-container">
+          <div class="swiper-wrapper"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </div>
+      </div>
+  </main>
+  <footer>
+    <div class="footer_content">
+      <a href="https://rs.school/" target="_blank">RS School 2020q1</a>
+      <a class="github_info" href="https://github.com/myfenix92" target="_blank">myfenix92</a>
+    </div>
+  </footer>
+  <script src="/node_modules/swiper/js/swiper.min.js"></script>
+</body>
+</html>

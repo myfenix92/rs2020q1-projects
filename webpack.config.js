@@ -5,9 +5,10 @@ const {
 } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const isDev = process.env.NODE_ENV === 'development'
-console.log('DEV', isDev)
+// console.log('DEV', isDev)
 
 const cssLoaders = (extra) => {
   const loaders = [{
@@ -37,17 +38,16 @@ const jsLoaders = () => {
   if (isDev) {
     loaders.push('eslint-loader')
   }
-
   return loaders
 }
 
 module.exports = {
-  context: path.resolve(__dirname, './english-for-kids/src'),
+  context: path.resolve(__dirname, './movie-search/src'),
   mode: 'development',
   entry: {
-    main: './index.js',
-    card: './moduleCards.js',
+    main: ['@babel/polyfill', './index.js'],
     const: './moduleConst.js',
+    keyboard: './moduleKeyboard.js',
   },
   output: {
     filename: '[name].bundle.js',
@@ -58,20 +58,18 @@ module.exports = {
     hot: isDev,
   },
   plugins: [
+
+    new CircularDependencyPlugin(),
     new HTMLWebpackPlugin({
       template: './index.html',
     }),
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([{
-      from: path.resolve(__dirname, './english-for-kids/src/favicon.ico'),
+      from: path.resolve(__dirname, './movie-search/src/favicon.ico'),
       to: path.resolve(__dirname, 'dist'),
     }, {
-      from: path.resolve(__dirname, './english-for-kids/src/img'),
+      from: path.resolve(__dirname, './movie-search/src/img'),
       to: path.resolve(__dirname, 'dist/img'),
-    },
-    {
-      from: path.resolve(__dirname, './english-for-kids/src/audio'),
-      to: path.resolve(__dirname, 'dist/audio'),
     }]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
